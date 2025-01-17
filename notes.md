@@ -7,8 +7,7 @@ As part of `Deliverable ⓵ Development deployment: JWT Pizza`, start up the app
 | User activity                                       | Frontend component | Backend endpoints | Database SQL |
 | --------------------------------------------------- | ------------------ | ----------------- | ------------ |
 | View home page                                      | home.jsx           |        none       |   none       |
-| Register new user<br/>(t@jwt.com, pw: test)         |      register.tsx  | [POST] /api/auth [PUT] /api/auth |      INSERT INTO user (name, email, password) VALUES (?, ?, ?)
-INSERT INTO auth (token, userId) VALUES (?, ?)        |
+| Register new user<br/>(t@jwt.com, pw: test)         |      register.tsx  | [POST] /api/auth [PUT] /api/auth |      INSERT INTO user (name, email, password) VALUES (?, ?, ?)INSERT INTO auth (token, userId) VALUES (?, ?)        |
 | Login new user<br/>(t@jwt.com, pw: test)            |                    |                   |              |
 | Order pizza                                         |                    |                   |              |
 | Verify pizza                                        |                    |                   |              |
