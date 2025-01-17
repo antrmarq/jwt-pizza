@@ -6,10 +6,23 @@ As part of `Deliverable ⓵ Development deployment: JWT Pizza`, start up the app
 
 | User activity                                       | Frontend component | Backend endpoints | Database SQL |
 | --------------------------------------------------- | ------------------ | ----------------- | ------------ |
-| View home page                                      |                    |                   |              |
-| Register new user<br/>(t@jwt.com, pw: test)         |                    |                   |              |
-| Login new user<br/>(t@jwt.com, pw: test)            |                    |                   |              |
-| Order pizza                                         |                    |                   |              |
+| View home page                                      | home.jsx           |        none       |   none       |
+| Register new user<br/>(t@jwt.com, pw: test)         |       register.tsx             |    [POST] /api/auth
+[PUT] /api/auth               |       INSERT INTO user (name, email, password) VALUES (?, ?, ?)
+INSERT INTO auth (token, userId) VALUES (?, ?)       |
+| Login new user<br/>(t@jwt.com, pw: test)            |        login.tsx            |      [PUT] /api/auth	             |       SELECT * FROM user WHERE email=?
+SELECT * FROM userRole WHERE userId=?
+INSERT INTO auth (token, userId) VALUES (?, ?)       |
+| Order pizza                                         |         menu.tsx
+payment.tsx
+deliver.tsx           |      [GET] /api/order/menu
+GET /api/franchise
+[POST] /api/order             |       SELECT userId FROM auth WHERE token=?
+SELECT * FROM menu
+SELECT id, name FROM franchise
+INSERT INTO dinerOrder (dinerId, franchiseId, storeId, date) VALUES (?, ?, ?, now())
+INSERT INTO orderItem (orderId, menuId, description, price) VALUES (?, ?, ?, ?)
+SELECT id FROM menu WHERE id=?       |
 | Verify pizza                                        |                    |                   |              |
 | View profile page                                   |                    |                   |              |
 | View franchise<br/>(as diner)                       |                    |                   |              |
