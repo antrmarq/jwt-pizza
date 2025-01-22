@@ -1,5 +1,6 @@
 {
   "name": "pizzashop",
+  "homepage": "https://antmarq.com",
   "version": "1.0.0",
   "description": "The world's first JWT Pizza",
   "main": "index.js",
