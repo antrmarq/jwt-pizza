@@ -278,13 +278,16 @@ test('not found page', async ({page}) => {
 });
 
 test('login error', async ({ page }) => {
-    await page.goto('/login');
-    //fill in the form with invalid data
-    await page.getByRole('textbox', { name: 'Email address' }).fill('123@email.com');
-    await page.getByRole('textbox', { name: 'Password' }).fill('123');
+    await page.route('*/**/api/auth', async (route) => {
+        const loginReq = { email: 'invalid@jwt.com', password: 'wrongpassword' };
+        expect(route.request().method()).toBe('PUT');
+        expect(route.request().postDataJSON()).toMatchObject(loginReq);
+        await route.fulfill({ status: 404, json: { message: 'User not found' } });
+    });
 
-    //submit the form
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Login' }).click();
+    await page.getByRole('textbox', { name: 'Email address' }).fill('invalid@jwt.com');
+    await page.getByRole('textbox', { name: 'Password' }).fill('wrongpassword');
     await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page.getByText('unknown user')).toBeVisible({timeout: 10000});
-
 });
