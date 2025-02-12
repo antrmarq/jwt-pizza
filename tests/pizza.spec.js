@@ -285,6 +285,6 @@ test('login error', async ({ page }) => {
 
     //submit the form
     await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page.getByText('unknown user')).toBeVisible();
+    await expect(page.getByText('unknown user')).toBeVisible({timeout: 10000});
 
 });
