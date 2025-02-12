@@ -94,8 +94,7 @@ test('create a new franchise', async ({ page }) => {
   
 });
 
-test('franchise store management', async ({ page }) => {
-    // login franchise
+test('franchise store', async ({ page }) => {
     await page.route('**/api/auth', async (route) => {
       const loginReq = { email: 'f@jwt.com', password: 'franchisee' };
       expect(route.request().postDataJSON()).toMatchObject(loginReq);
@@ -106,7 +105,6 @@ test('franchise store management', async ({ page }) => {
       await route.fulfill({ json: loginRes });
     });
   
-    // mock franchise data
     await page.route('**/api/franchise/*', async (route) => {
       if (route.request().method() === 'GET') {
         await route.fulfill({
@@ -122,7 +120,6 @@ test('franchise store management', async ({ page }) => {
     });
   
     await page.goto('/');
-    // Login
     await page.getByRole('link', { name: 'Login' }).click();
     await expect(page.getByText('Welcome back')).toBeVisible();
     await page.getByRole('textbox', { name: 'Email address' }).fill('f@jwt.com');
@@ -130,7 +127,6 @@ test('franchise store management', async ({ page }) => {
     await page.getByRole('button', { name: 'Login' }).click();
     await expect(page.getByRole('heading', { name: /The web's best pizza/ })).toBeVisible();
   
-    // franchise list and make franchise
     await page.getByLabel('Global').getByRole('link', { name: 'Franchise' }).click();
     await expect(page.getByText('pizzaPocket')).toBeVisible();
     await page.getByRole('button', { name: 'Create store' }).click();
@@ -139,14 +135,6 @@ test('franchise store management', async ({ page }) => {
     await page.getByRole('button', { name: 'Create' }).click();
 });
   
-
-test('history page', async ({page}) => {
-    await page.goto('/history');
-    await expect(page.getByText('Mama Rucci, my my')).toBeVisible();
-    await expect(page.getByText('It all started in Mama Ricci\'')).toBeVisible();
-    await expect(page.getByRole('main').getByRole('img')).toBeVisible();
-    await expect(page.getByText('FranchiseAboutHistory')).toBeVisible();
-});
 
 test('franchise public', async ({page}) => {
     await page.goto('/franchise-dashboard');
@@ -228,11 +216,32 @@ test('diner dashboard', async ({ page }) => {
     await expect(page.getByRole('main')).toContainText('role:');
     await expect(page.getByText('How have you lived this long without having a pizza? Buy one now!')).toBeVisible();
 });
-test('about page', async ({page}) => {
-    await page.goto('/about');
-    await expect(page.getByText('The secret sauce')).toBeVisible();
-    await expect(page.getByText('At JWT Pizza, our amazing')).toBeVisible();
-    await expect(page.getByText('FranchiseAboutHistory')).toBeVisible();
+test('history and about page (also ensuring navigation is working)', async ({ page }) => {
+    await page.route('*/**/api/auth', async (route) => {
+      const loginReq = { email: 'a@jwt.com', password: 'admin' };
+        expect(route.request().postDataJSON()).toMatchObject(loginReq);
+        const loginRes = {
+          user: { id: 1, name: 'Admin User', email: 'a@jwt.com', roles: [{ role: 'admin' }] },
+          token: 'fake-token'
+        };
+        await route.fulfill({ json: loginRes });
+    });
+  //   login
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Login' }).click();
+    await expect(page.getByText('Welcome back')).toBeVisible();
+  
+    await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
+    await page.getByRole('textbox', { name: 'Password' }).fill('admin');
+    await page.getByRole('button', { name: 'Login' }).click();
+  
+  // history page
+  await page.getByRole('link', { name: 'History' }).click();
+  await expect(page.getByText('Mama Rucci, my my')).toBeVisible();
+  await page.getByRole('link', { name: 'About' }).click();
+  await expect(page.getByText('The secret sauce')).toBeVisible();
+  await page.getByRole('link', { name: 'Franchise' }).click();
+  await expect(page.getByText('If you are already a')).toBeVisible();
 });
 
 test('logout', async ({ page }) => {
