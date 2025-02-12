@@ -118,3 +118,4 @@ test('buy pizza with login', async ({ page }) => {
     // Check balance
     await expect(page.getByText('0.008')).toBeVisible();
   });
+  
