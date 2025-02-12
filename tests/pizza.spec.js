@@ -47,3 +47,30 @@ test('purchase with login', async ({ page }) => {
     await page.getByRole('button', { name: 'Pay now' }).click();
   });
   
+  test('diner dashboard', async ({ page }) => {
+    await page.route('*/**/api/auth', async (route) => {
+      const loginReq = { email: 'd@jwt.com', password: 'a' };
+      const loginRes = { user: { id: 3, name: 'Kai Chen', email: 'd@jwt.com', roles: [{ role: 'diner' }] }, token: 'abcdef' };
+      expect(route.request().method()).toBe('PUT');
+      expect(route.request().postDataJSON()).toMatchObject(loginReq);
+      await route.fulfill({ json: loginRes });
+    });
+  
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Login' }).click();
+    await expect(page.getByText('Welcome back')).toBeVisible();
+    await page.getByPlaceholder('Email address').fill('d@jwt.com');
+    await page.getByPlaceholder('Password').fill('a');
+    await page.getByRole('button', { name: 'Login' }).click();
+    // diner dashboard
+    await page.getByRole('link', { name: 'kc' }).click();
+    await page.getByText('Kai Chen').click();
+    await expect(page.getByRole('heading', { name: 'Your pizza kitchen' })).toBeVisible();
+  
+    // Verify that user information
+    await expect(page.getByText('Kai Chen')).toBeVisible();
+    await expect(page.getByText('d@jwt.com')).toBeVisible();
+    await expect(page.getByRole('main')).toContainText('role:');
+    await expect(page.getByText('How have you lived this long without having a pizza? Buy one now!')).toBeVisible();
+  });
+  
