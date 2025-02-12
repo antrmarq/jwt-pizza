@@ -277,3 +277,14 @@ test('not found page', async ({page}) => {
     await expect(page.getByText('It looks like we have dropped a pizza on the floor. Please try another page.')).toBeVisible();
 });
 
+test('login error', async ({ page }) => {
+    await page.goto('/login');
+    //fill in the form with invalid data
+    await page.getByRole('textbox', { name: 'Email address' }).fill('123@email.com');
+    await page.getByRole('textbox', { name: 'Password' }).fill('123');
+
+    //submit the form
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(page.getByText('unknown user')).toBeVisible();
+
+});
