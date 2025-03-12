@@ -96,6 +96,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       version: ${{needs.build.outputs.version}}
+    permissions:
+      contents: write
     steps:
       - name: Create staging release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
